@@ -12,8 +12,9 @@ Sanity Checks:
 - return_rate_pct is between 0 and 100.
 - returns <= orders_with_category for every category.
 - Sum of category revenue matches paid order line_total within 0.5%.
+-Return rate is based on completed returns only
+-return_requests.status IN ('approved', 'refunded')).
 */
-
 with category_sales as (
 
     select
@@ -36,7 +37,7 @@ with category_sales as (
     join ecom.categories c
         on p.category_id = c.category_id
 
-    where o.payment_status = 'paid'
+    where lower(o.payment_status) = 'paid'
 
     group by
          c.category_name
@@ -47,9 +48,12 @@ category_returns as (
 
     select
          c.category_name as category
-        ,sum(ri.qty) as returns
+        ,count(distinct rr.order_id) as returned_orders
 
     from ecom.return_items ri
+
+    join ecom.return_requests rr
+        on ri.return_id = rr.return_id
 
     join ecom.product_variants pv
         on ri.variant_id = pv.variant_id
@@ -60,22 +64,31 @@ category_returns as (
     join ecom.categories c
         on p.category_id = c.category_id
 
+    where lower(rr.status) in (
+        'approved'
+        ,'refunded'
+    )
+
     group by
          c.category_name
 
 )
+
+-- Return rate = completed returned orders (approved/refunded)
+-- divided by paid orders containing the category.
 
 select
      cs.category
     ,cs.orders_with_category
     ,cs.units_sold
     ,cs.revenue
-    ,coalesce(cr.returns, 0) as returns
+    ,coalesce(cr.returned_orders, 0) as returns
+
     ,round(
-         coalesce(cr.returns, 0) * 100.0
-         / nullif(cs.orders_with_category, 0)
-        ,2
-     ) as return_rate_pct
+        coalesce(cr.returned_orders, 0) * 100.0
+        / nullif(cs.orders_with_category, 0),
+        2
+    ) as return_rate_pct
 
 from category_sales cs
 
@@ -83,4 +96,4 @@ left join category_returns cr
     on cs.category = cr.category
 
 order by
-     cs.revenue desc;
+     revenue desc;

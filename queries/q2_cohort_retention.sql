@@ -1,4 +1,4 @@
-*
+/*
 Q2 - Monthly Cohort Retention
 
 Business Question:
@@ -18,15 +18,12 @@ Sanity Checks:
 - Censored months display NULL instead of 0.
 */
 
-with customer_first_order_month as (
+with customer_signup_month as (
 
     select
          customer_id
-        ,date_trunc('month', min(created_at))::date as cohort_month
-    from ecom.orders
-    where status <> 'cancelled'
-    group by
-         customer_id
+        ,date_trunc('month', created_at)::date as cohort_month
+    from ecom.customers
 
 ),
 
@@ -36,32 +33,34 @@ customer_order_months as (
          customer_id
         ,date_trunc('month', created_at)::date as order_month
     from ecom.orders
-    where status <> 'cancelled'
+    where lower(status) <> 'cancelled'
 
 ),
 
 customer_month_offsets as (
 
     select
-         cfom.customer_id
-        ,cfom.cohort_month
+         csm.customer_id
+        ,csm.cohort_month
         ,com.order_month
         ,(
             (
                 extract(year from com.order_month)
-                - extract(year from cfom.cohort_month)
+                - extract(year from csm.cohort_month)
             ) * 12
             +
             (
                 extract(month from com.order_month)
-                - extract(month from cfom.cohort_month)
+                - extract(month from csm.cohort_month)
             )
         )::int as month_offset
 
-    from customer_first_order_month cfom
+    from customer_signup_month csm
 
-    left join customer_order_months com
-        on cfom.customer_id = com.customer_id
+    join customer_order_months com
+        on csm.customer_id = com.customer_id
+
+    where com.order_month >= csm.cohort_month
 
 ),
 
@@ -69,8 +68,8 @@ cohort_sizes as (
 
     select
          cohort_month
-        ,count(customer_id) as cohort_size
-    from customer_first_order_month
+        ,count(*) as cohort_size
+    from customer_signup_month
     group by
          cohort_month
 
@@ -105,7 +104,7 @@ latest_order_month as (
     select
          date_trunc('month', max(created_at))::date as max_order_month
     from ecom.orders
-    where status <> 'cancelled'
+    where lower(status) <> 'cancelled'
 
 ),
 
@@ -117,26 +116,26 @@ final_report as (
 
         ,case
             when cs.cohort_month + interval '1 month' <= lom.max_order_month
-                then coalesce(cr.m1_retained, 0)
+                then cr.m1_retained
             else null
          end as m1_retained
 
         ,case
             when cs.cohort_month + interval '2 month' <= lom.max_order_month
-                then coalesce(cr.m2_retained, 0)
+                then cr.m2_retained
             else null
          end as m2_retained
 
         ,case
             when cs.cohort_month + interval '3 month' <= lom.max_order_month
-                then coalesce(cr.m3_retained, 0)
+                then cr.m3_retained
             else null
          end as m3_retained
 
         ,case
             when cs.cohort_month + interval '1 month' <= lom.max_order_month
                 then round(
-                    coalesce(cr.m1_retained, 0)::numeric
+                    cr.m1_retained::numeric
                     / nullif(cs.cohort_size, 0),
                     4
                 )
@@ -146,7 +145,7 @@ final_report as (
         ,case
             when cs.cohort_month + interval '2 month' <= lom.max_order_month
                 then round(
-                    coalesce(cr.m2_retained, 0)::numeric
+                    cr.m2_retained::numeric
                     / nullif(cs.cohort_size, 0),
                     4
                 )
@@ -156,7 +155,7 @@ final_report as (
         ,case
             when cs.cohort_month + interval '3 month' <= lom.max_order_month
                 then round(
-                    coalesce(cr.m3_retained, 0)::numeric
+                    cr.m3_retained::numeric
                     / nullif(cs.cohort_size, 0),
                     4
                 )
@@ -183,4 +182,4 @@ select
     ,m3_retention_rate
 from final_report
 order by
-     cohort_month asc;
+     cohort_month;

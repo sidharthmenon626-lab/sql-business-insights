@@ -13,49 +13,86 @@ Pattern note  : Classic top-N-per-group. CTE 1 aggregates attempts/failures per
                 error per method.
 */
 
-with payment_method_performance as (
+with payment_transactions_enriched as (
+
     select
-         pm.method_name as payment_method
-        ,count(pi.payment_intent_id) as attempts
-        ,count(*) filter (where pi.status = 'failed') as failures
-        ,count(*) filter (where pi.status = 'failed')::numeric
-            / nullif(count(pi.payment_intent_id), 0) as failure_rate
-    from ecom.payment_intents pi
+         pt.txn_id
+        ,pt.status
+        ,pt.error_code
+        ,pt.error_message
+        ,pm.method_name as payment_method
+
+    from ecom.payment_transactions pt
+
+    join ecom.payment_intents pi
+        on pt.payment_intent_id = pi.payment_intent_id
+
     join ecom.payment_methods pm
         on pi.payment_method_id = pm.payment_method_id
+
+),
+
+payment_method_performance as (
+
+    select
+         payment_method
+        ,count(*) as attempts
+
+        ,count(*) filter (
+            where lower(status) = 'failed'
+        ) as failures
+
+        ,round(
+            count(*) filter (
+                where lower(status) = 'failed'
+            )::numeric
+            / nullif(count(*), 0),
+            4
+        ) as failure_rate
+
+    from payment_transactions_enriched
+
     group by
-        pm.method_name
+         payment_method
+
 ),
 
 payment_error_counts as (
+
     select
-         pm.method_name as payment_method
-        ,pt.error_code
-        ,pt.error_message
+         payment_method
+        ,error_code
+        ,error_message
         ,count(*) as error_count
-    from ecom.payment_transactions pt
-    join ecom.payment_intents pi
-        on pt.payment_intent_id = pi.payment_intent_id
-    join ecom.payment_methods pm
-        on pi.payment_method_id = pm.payment_method_id
-    where pt.status = 'failed'
+
+    from payment_transactions_enriched
+
+    where lower(status) = 'failed'
+
     group by
-         pm.method_name
-        ,pt.error_code
-        ,pt.error_message
+         payment_method
+        ,error_code
+        ,error_message
+
 ),
 
 ranked_payment_errors as (
+
     select
          payment_method
         ,error_code
         ,error_message
         ,error_count
+
         ,row_number() over (
             partition by payment_method
-            order by error_count desc
+            order by
+                 error_count desc
+                ,error_code
         ) as rn
+
     from payment_error_counts
+
 )
 
 select
@@ -65,10 +102,19 @@ select
     ,pmp.failure_rate
     ,rpe.error_code as top_error_code
     ,rpe.error_message as top_error_message
-    ,rpe.error_count::numeric
-        / nullif(pmp.failures, 0) as top_error_share_of_failures
+
+    ,round(
+        rpe.error_count::numeric
+        / nullif(pmp.failures, 0),
+        4
+    ) as top_error_share_of_failures
+
 from payment_method_performance pmp
+
 left join ranked_payment_errors rpe
     on pmp.payment_method = rpe.payment_method
-    and rpe.rn = 1
-;
+   and rpe.rn = 1
+
+order by
+     pmp.failure_rate desc
+    ,pmp.attempts desc;

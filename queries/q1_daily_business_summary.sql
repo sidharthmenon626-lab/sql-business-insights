@@ -149,4 +149,4 @@ select
     ,revenue_vs_last_weekday_pct
 from final_report
 order by
-     order_date;
+     order_date desc;

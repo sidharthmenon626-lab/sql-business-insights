@@ -26,7 +26,7 @@ Sidharth Menon — [LinkedIn](https://www.linkedin.com/in/sidharthmenon793)
 | Q6 | `queries/q6_payment_failure.sql` | Which payment methods fail most, and why? |
 | Q7 | `queries/q7_delivery_sla.sql` | Who's missing the 5-day delivery SLA, and by how much? |
 | Q8 | `queries/q8_customer_ltv.sql` | Who are our top spenders, and what share of revenue are they? |
-| Q9a / Q9b | `queries/q9a_repeat_interval_rowlevel.sql`, `queries/q9b_repeat_interval_summary.sql` | How long until a customer's next order? |
+| Q9| `queries/q9_repeat_interval_rowlevel_summary` | How long until a customer's next order? |
 | Q10 | `queries/q10_attribution.sql` | First-touch vs last-touch: which channels open vs close? |
 
 ## 🚀 How to run

@@ -41,7 +41,7 @@ with customer_intervals as (
             order by created_at
         ) as next_order_date
     from ecom.orders
-
+    where status <> 'cancelled'
 )
 
 select
@@ -87,7 +87,6 @@ Sanity Checks
 ===============================================================================
 ===============================================================================
 */
-
 with customer_intervals as (
 
     select
@@ -98,7 +97,7 @@ with customer_intervals as (
             order by created_at
         ) as next_order_date
     from ecom.orders
-
+    where status <> 'cancelled'
 )
 
 , repeat_purchase_intervals as (

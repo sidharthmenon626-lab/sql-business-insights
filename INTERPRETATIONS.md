@@ -30,8 +30,8 @@
 
 **Business interpretation (2-3 sentences):**
 
-- March cohort retains strongly early (**63% M1, 56% M2**) but **M3 halves to 28%** — a churn cliff around month three.
-- M1 retention **collapses cohort-over-cohort**: **63% (Mar) → 26% (Apr) → 3.1% (May)** — newer signups barely return, mirroring the Q1 revenue slide.
+- March cohort retains strongly early (**50.2% M1, 41.9% M2**) but **M3 roughly halves to 19.2%** — a churn cliff around month three.
+- M1 retention **declines cohort-over-cohort**: **50.2% (Mar) → 42.6% (Apr) → 18.2% (May)** — newer signups return at roughly a third the March rate, mirroring the Q1 revenue slide.
 - Later cohorts' M2/M3 cells are **censored** (too recent to observe) and correctly appear blank, not zero.
 
 **What I'd ask next:** What changed in acquisition after March — a cheaper, lower-intent channel, or degraded onboarding? The M1 collapse is the single biggest retention risk and needs a channel-level cohort cut to localize the cause.
@@ -81,7 +81,7 @@
 **Business interpretation (2-3 sentences):**
 
 - **Smartwatch is the revenue engine** at **₹59.7M** — 57% more than the next category, Headphones (**₹38.1M**) — confirming the Q4 wearables/audio concentration.
-- Return rates are **tight and low everywhere** (**2.76–3.56%**); Accessories is highest at 3.56% but on small revenue.
+- Return rates are **tight and low everywhere** (**0.77–1.08%**); Decor is highest at 1.08%, Headphones lowest at 0.77% — both on modest volume.
 - Revenue spread is enormous (**Smartwatch ₹59.7M vs Haircare ₹4.0M**) while return rates barely move — so category strategy should follow revenue and margin, not returns.
 
 **What I'd ask next:** Is Smartwatch's dominance a handful of hero SKUs or broad catalogue depth? If it's concentrated, that's a supplier and inventory risk worth hedging.
@@ -96,7 +96,7 @@
 
 **Business interpretation (2-3 sentences):**
 
-- **UPI** carries the most real volume (**12,801 attempts, 677 failures**) and the **worst rate at 5.3%** — a quarter of failures are `GATEWAY_TIMEOUT`, an infrastructure issue (recoverable), not customer error.
+- **UPI** carries the most real volume (**12,835 attempts, 711 failures**) and the **worst rate at 5.5%** — a quarter of failures are `GATEWAY_TIMEOUT`, an infrastructure issue (recoverable), not customer error.
 - **Card** has the highest raw attempts (**14,166**) but a lower **4.2%** rate; its top reason is **FRAUD (28%)** — a risk problem, not a technical one.
 - **Netbanking** is the cleanest method at **4.2%**.
 
@@ -145,9 +145,9 @@
 
 **Business interpretation (2-3 sentences):**
 
-- **42%** of all "repeat" intervals are **same-day** — customers splitting one session into multiple orders minutes apart, not genuine re-engagement.
+- **41%** of all "repeat" intervals are **same-day** — customers splitting one session into multiple orders minutes apart, not genuine re-engagement.
 - That single choice moves the **median from 1 day (including) to 6 days (excluding)**.
-- The **excluding-same-day view** (median **6**, p90 **27**, **3,443** repeat customers) is the correct basis for win-back timing — and correctly drops **358** customers whose only "repeat" was same-day.
+- The **excluding-same-day view** (median **6**, p90 **27**, **3,418** repeat customers) is the correct basis for win-back timing — and correctly drops **341** customers whose only "repeat" was same-day.
 
 **What I'd ask next:** The win-back email should fire before the excluding-same-day p90 of 27 days lapses — I'd target roughly **day 14–20** and A/B test the trigger window.
 
