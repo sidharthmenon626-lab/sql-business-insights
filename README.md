@@ -13,22 +13,20 @@ Ten SQL queries against a real-shaped e-commerce warehouse (`ecom` schema, Postg
 - **UPI payment failures are recoverable revenue.** UPI has the worst failure rate (**5.5%**, 12,835 attempts), and a quarter of those failures are infrastructure timeouts, not declined payments.
 
 ## 📊 Key Charts
-
-<img width="757" height="586" alt="q1_daily_revenue_vs_aov" src="https://github.com/user-attachments/assets/a79fb94a-cd0b-48a1-9127-e3c53614bd8f" />
-
 *Q1 — Daily revenue sliding ~80% from the April peak while AOV holds flat: a volume problem, not a pricing one.*
-
-<img width="736" height="573" alt="q3_funnel_conversion_by_channel" src="https://github.com/user-attachments/assets/ac3abcf8-d2a7-48de-8e8f-db3f17693149" />
+<img width="757" height="586" alt="q1_daily_revenue_vs_aov" src="https://github.com/user-attachments/assets/a79fb94a-cd0b-48a1-9127-e3c53614bd8f" />
 
 *Q3 — Stage-to-stage funnel conversion by channel. The leak is uniformly at view→cart (~40%); downstream stages are healthy (81%+).*
 
-<img width="730" height="574" alt="q8_revenue_share_by_ltv_bucket" src="https://github.com/user-attachments/assets/681a2cde-c3cd-4764-98ad-47499375a2e2" />
+<img width="736" height="573" alt="q3_funnel_conversion_by_channel" src="https://github.com/user-attachments/assets/ac3abcf8-d2a7-48de-8e8f-db3f17693149" />
 
 *Q8 — The ₹20,000+ lifetime-spend bucket alone generates 88% of total revenue.*
 
-<img width="718" height="571" alt="q8_customer_count_by_ltv_bucket" src="https://github.com/user-attachments/assets/40ff5cb4-8fe5-44ec-bbb8-e826115e8928" />
+<img width="730" height="574" alt="q8_revenue_share_by_ltv_bucket" src="https://github.com/user-attachments/assets/681a2cde-c3cd-4764-98ad-47499375a2e2" />
 
 *Q8 — That same ₹20,000+ tier is only 40% of customers — the whale concentration behind the revenue chart above.*
+
+<img width="718" height="571" alt="q8_customer_count_by_ltv_bucket" src="https://github.com/user-attachments/assets/40ff5cb4-8fe5-44ec-bbb8-e826115e8928" />
 
 ## 📄 Case study
 
